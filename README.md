@@ -40,6 +40,5 @@ Para mais informações, entre em contato com os responsáveis pelo projeto:
 - [Pedro] - phm.pedroalves@gmail.com
 - [Mário] - marioaugustov.s2@gmail.com
 - [Letícia] - leticia.gchavess@gmail.com
-- [Letícia] - leticia.gchavess@gmail.com
-- [Letícia] - leticia.gchavess@gmail.com
+
 
