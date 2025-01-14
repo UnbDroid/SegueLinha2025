@@ -55,7 +55,13 @@ void loop() {
   // Integrar os valores do giroscópio para calcular os ângulos
   angleX += IMU.getGyroX_rads() * deltaTime;
   angleY += IMU.getGyroY_rads() * deltaTime;
-  angleZ += IMU.getGyroZ_rads() * deltaTime;
+  // Condição para integrar o valor absoluto de GyroZ
+  //angleZ += IMU.getGyroZ_rads() * deltaTime;
+
+  if (abs(IMU.getGyroZ_rads() * deltaTime) > 0.00005) {
+    angleZ += IMU.getGyroZ_rads() * deltaTime;
+  }
+  
 
   // Converter os ângulos de radianos para graus
   float angleX_deg = angleX * 180.0 / PI;
