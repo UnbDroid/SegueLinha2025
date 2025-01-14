@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/guilherme-andrade-mendes/Documentos/PlatformIO/Projects/giros_test/include",
-                "/home/guilherme-andrade-mendes/Documentos/PlatformIO/Projects/giros_test/src",
-                "/home/guilherme-andrade-mendes/Documentos/PlatformIO/Projects/giros_test/lib/MPU9250-master/src",
+                "/home/guilherme-andrade-mendes/SegueLinha2025/giros_test/include",
+                "/home/guilherme-andrade-mendes/SegueLinha2025/giros_test/src",
+                "/home/guilherme-andrade-mendes/SegueLinha2025/giros_test/lib/MPU9250-master/src",
                 "/home/guilherme-andrade-mendes/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "/home/guilherme-andrade-mendes/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "/home/guilherme-andrade-mendes/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
@@ -245,9 +245,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/guilherme-andrade-mendes/Documentos/PlatformIO/Projects/giros_test/include",
-                    "/home/guilherme-andrade-mendes/Documentos/PlatformIO/Projects/giros_test/src",
-                    "/home/guilherme-andrade-mendes/Documentos/PlatformIO/Projects/giros_test/lib/MPU9250-master/src",
+                    "/home/guilherme-andrade-mendes/SegueLinha2025/giros_test/include",
+                    "/home/guilherme-andrade-mendes/SegueLinha2025/giros_test/src",
+                    "/home/guilherme-andrade-mendes/SegueLinha2025/giros_test/lib/MPU9250-master/src",
                     "/home/guilherme-andrade-mendes/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "/home/guilherme-andrade-mendes/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                     "/home/guilherme-andrade-mendes/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
