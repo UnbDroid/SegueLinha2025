@@ -40,10 +40,14 @@ Para mais informações, entre em contato com os responsáveis pelo projeto:
 - [Pedro] - phm.pedroalves@gmail.com
 - [Mário] - marioaugustov.s2@gmail.com
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 - [Letícia] - leticia.gchavess@gmail.com
 - [Guilherme] - guilhermemendesan@gmail.com
 
 
+=======
+- [Guilherme] - guilhermemendesan@gmail.com
+>>>>>>> Stashed changes
 =======
 - [Guilherme] - guilhermemendesan@gmail.com
 >>>>>>> Stashed changes
