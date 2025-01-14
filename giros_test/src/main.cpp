@@ -53,3 +53,4 @@ void loop() {
   Serial.println(IMU.getTemperature_C(), 6);
   delay(1000);
 }
+//alteração
