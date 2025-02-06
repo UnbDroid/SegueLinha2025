@@ -1,56 +1,85 @@
 #include <Arduino.h>
 
-#define ENCA 2
-#define ENCB 7
-#define R_EN 5
-#define RPWM 38
-#define LPWM 42
+#define ENCA1 3
+#define ENCB1 26
+#define ENA 5
+#define IN2 42
+#define IN1 43
 
-unsigned long pos = 0; // Variável para armazenar a posição do encoder
+#define ENCA2 2
+#define ENCB2 28
+#define ENB 7
+#define IN4 48
+#define IN3 49
+
+unsigned long pos1 = 0; // Variável para armazenar a posição do encoder do motor 1
+unsigned long pos2 = 0; // Variável para armazenar a posição do encoder do motor 2
 
 // Declaração das funções
-void readencoder();
+void readencoder1();
+void readencoder2();
 void setMotor(int dir, int pwmVal, int pwm, int in1, int in2);
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(ENCA, INPUT);
-  pinMode(ENCB, INPUT);
-  pinMode(RPWM, OUTPUT);
-  pinMode(LPWM, OUTPUT);
-  pinMode(R_EN, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(ENCA), readencoder, RISING);
-  setMotor(1, 255, R_EN, LPWM, RPWM); 
+Serial.begin(9600);
+// Configuração do motor 1
+pinMode(ENCA1, INPUT);
+pinMode(ENCB1, INPUT);
+pinMode(IN2, OUTPUT);
+pinMode(IN1, OUTPUT);
+pinMode(ENA, OUTPUT);
+attachInterrupt(digitalPinToInterrupt(ENCA1), readencoder1, RISING);
+
+
+// Configuração do motor 2
+pinMode(ENCA2, INPUT);
+pinMode(ENCB2, INPUT);
+pinMode(IN4, OUTPUT);
+pinMode(IN3, OUTPUT);
+pinMode(ENB, OUTPUT);
+attachInterrupt(digitalPinToInterrupt(ENCA2), readencoder2, RISING);
+ 
 }
 
 void loop() {
-  //Serial.println(pos);
-  //setMotor(1, 255, R_EN, LPWM, RPWM); // Mover o motor para frente com velocidade máxima
-  //delay(1000);
-  //setMotor(0, 0, RPWM, LPWM, RPWM); // Parar o motor
-  //delay(1000);
+Serial.println(pos1);
+Serial.println(pos2);
+setMotor(1, 255, ENA, IN1, IN2); 
+setMotor(1, 255, ENB, IN3, IN4); 
+delay(1000);
+setMotor(0, 0, ENA, IN1, IN2); // Parar o motor 1
+setMotor(0, 0, ENB, IN3, IN4); // Parar o motor 2
+delay(1000);
 }
 
-void readencoder() {
-  int b = digitalRead(ENCA);
-  if (b > 0) {
-    pos++;
-  } else {
-    pos--;
-  }
+void readencoder1() {
+int b = digitalRead(ENCA1);
+if (b > 0) {
+pos1++;
+} else {
+pos1--;
+}
 }
 
-void setMotor(int dir, int pwmVal, int pwm, int in1, int in2) {
-  analogWrite(pwm, pwmVal);
-  if (dir == 1) {
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-  } else if (dir == -1) {
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-  } else {
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, LOW);
-  }
+void readencoder2() {
+int b = digitalRead(ENCA2);
+if (b > 0) {
+pos2++;
+} else {
+pos2--;
 }
-//10000
+}
+
+void setMotor(int dir, int pwmVal, int en, int in1, int in2) {
+analogWrite(en, pwmVal);
+if (dir == 1) {
+digitalWrite(in1, HIGH);
+digitalWrite(in2, LOW);
+} else if (dir == -1) {
+digitalWrite(in1, LOW);
+digitalWrite(in2, HIGH);
+} else {
+digitalWrite(in1, LOW);
+digitalWrite(in2, LOW);
+}
+}
