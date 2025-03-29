@@ -1,16 +1,10 @@
 #include <Arduino.h>
+#include "MotorDC.h"
+#include "Pins.h"
 
-#define ENCA1 3
-#define ENCB1 26
-#define ENA 5
-#define IN2 42
-#define IN1 43
-
-#define ENCA2 2
-#define ENCB2 28
-#define ENB 7
-#define IN4 48
-#define IN3 49
+// Criação dos objetos Motor esquerdo e direito
+MotorDC MotorE(ENCA1, ENCB1, ENA, IN2, IN1);
+MotorDC MotorD(ENCA2, ENCB2, ENB, IN3, IN4);
 
 unsigned long pos1 = 0; // Variável para armazenar a posição do encoder do motor 1
 unsigned long pos2 = 0; // Variável para armazenar a posição do encoder do motor 2
@@ -18,38 +12,30 @@ unsigned long pos2 = 0; // Variável para armazenar a posição do encoder do mo
 // Declaração das funções
 void readencoder1();
 void readencoder2();
-void setMotor(int dir, int pwmVal, int pwm, int in1, int in2);
+
 
 void setup() {
-Serial.begin(9600);
-// Configuração do motor 1
-pinMode(ENCA1, INPUT);
-pinMode(ENCB1, INPUT);
-pinMode(IN2, OUTPUT);
-pinMode(IN1, OUTPUT);
-pinMode(ENA, OUTPUT);
-attachInterrupt(digitalPinToInterrupt(ENCA1), readencoder1, RISING);
+    Serial.begin(9600);
+    attachInterrupt(digitalPinToInterrupt(ENCA1), readencoder1, RISING);
+    attachInterrupt(digitalPinToInterrupt(ENCA2), readencoder2, RISING);
 
+    MotorD.configurar(2100, 1.8, 1.3, 0);
+    MotorE.configurar(2100, 1.8, 1.3, 0);
 
-// Configuração do motor 2
-pinMode(ENCA2, INPUT);
-pinMode(ENCB2, INPUT);
-pinMode(IN4, OUTPUT);
-pinMode(IN3, OUTPUT);
-pinMode(ENB, OUTPUT);
-attachInterrupt(digitalPinToInterrupt(ENCA2), readencoder2, RISING);
- 
 }
 
 void loop() {
-Serial.println(pos1);
-Serial.println(pos2);
-setMotor(1, 255, ENA, IN1, IN2); 
-setMotor(1, 255, ENB, IN3, IN4); 
-delay(1000);
-setMotor(0, 0, ENA, IN1, IN2); // Parar o motor 1
-setMotor(0, 0, ENB, IN3, IN4); // Parar o motor 2
-delay(1000);
+    Serial.println(pos1);
+    Serial.println(pos2);
+    MotorD.ligar_motor(1,200);
+    MotorE.ligar_motor(1,200);
+    delay(1000);
+
+    MotorD.parar();
+    MotorE.parar();
+    delay(1000);
+
+
 }
 
 void readencoder1() {
