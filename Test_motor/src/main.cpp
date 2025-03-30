@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <QTRSensors.h>
 #include "MotorDC.h"
 #include "Pins.h"
 
