@@ -14,9 +14,7 @@ QTRSensors qtr;
 unsigned long pos1 = 0; // Variável para armazenar a posição do encoder do motor 1
 unsigned long pos2 = 0; // Variável para armazenar a posição do encoder do motor 2
 
-// Declaração das funções
-void readencoder1();
-void readencoder2();
+
 
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
@@ -24,11 +22,8 @@ uint16_t sensorValues[SensorCount];
 void setup() {
 
     Serial.begin(9600);
-    attachInterrupt(digitalPinToInterrupt(ENCA1), readencoder1, RISING);
-    attachInterrupt(digitalPinToInterrupt(ENCA2), readencoder2, RISING);
-
-    //MotorD.configurar(2100, 1.8, 1.3, 0);
-    //MotorE.configurar(2100, 1.8, 1.3, 0);
+    MotorD.configurar(2100, 1.8, 1.3, 0);
+    MotorE.configurar(2100, 1.8, 1.3, 0);
 
    /* qtr.setTypeRC();
     qtr.setSensorPins((const uint8_t[]){32, 33, 25, 26, 27, 14, 12, 13}, SensorCount);
@@ -43,50 +38,9 @@ void setup() {
 
 }
 
-
-
-void ligar_motor(int direcao, int pwmVal){
-
-  if (direcao == 1){
-    // 1 para frente
-    analogWrite(IN1, pwmVal);
-    analogWrite(IN2, 0);
-    analogWrite(IN3, pwmVal);
-    analogWrite(IN4, 0);
-  }
-  else if (direcao == -1){
-    // -1 para trás
-    analogWrite(IN1, 0);
-    analogWrite(IN2, pwmVal);
-    analogWrite(IN3, 0);
-    analogWrite(IN4, pwmVal);
-  }
-  else{ // 0 para parar
-    digitalWrite(IN1, 255);
-    analogWrite(IN2, 255);
-    digitalWrite(IN3, 255);
-    analogWrite(IN4, 255);
-  }
-
-}
-
-void ligar_motor2(int direcao, int pwmVal){
-
-  if (direcao == 1){
-    // 1 para frente
-    analogWrite(IN3, pwmVal);
-    analogWrite(IN4, 0);
-  }
-  else if (direcao == -1){
-    // -1 para trás
-    analogWrite(IN3, 0);
-    analogWrite(IN4, pwmVal);
-  }
-  else{ // 0 para parar
-    digitalWrite(IN3, 255);
-    analogWrite(IN4, 255);
-  }
-
+void ligar_motor(int dir, int pwmVal) {
+    MotorD.ligar_motor(dir, pwmVal);
+    MotorE.ligar_motor(dir, pwmVal);
 }
 
 void loop()
@@ -107,38 +61,12 @@ void loop()
 
   delay(250);*/
 
-  ligar_motor(1,200);
+  MotorD.ligar_motor(1, 255);
+  MotorE.ligar_motor(1, 255);
+  delay(1000);
+  MotorD.ligar_motor(-1, 255);
+  MotorE.ligar_motor(-1, 255);
+  delay(1000);
+  
 
-}
-
-void readencoder1() {
-int b = digitalRead(ENCA1);
-if (b > 0) {
-pos1++;
-} else {
-pos1--;
-}
-}
-
-void readencoder2() {
-int b = digitalRead(ENCA2);
-if (b > 0) {
-pos2++;
-} else {
-pos2--;
-}
-}
-
-void setMotor(int dir, int pwmVal, int en, int in1, int in2) {
-analogWrite(en, pwmVal);
-if (dir == 1) {
-digitalWrite(in1, HIGH);
-digitalWrite(in2, LOW);
-} else if (dir == -1) {
-digitalWrite(in1, LOW);
-digitalWrite(in2, HIGH);
-} else {
-digitalWrite(in1, LOW);
-digitalWrite(in2, LOW);
-}
 }
