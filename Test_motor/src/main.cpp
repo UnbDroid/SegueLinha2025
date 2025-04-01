@@ -4,8 +4,8 @@
 #include "Pins.h"
 
 // Criação dos objetos Motor esquerdo e direito
-MotorDC MotorE(ENCA1, ENCB1, ENA, IN2, IN1);
-MotorDC MotorD(ENCA2, ENCB2, ENB, IN3, IN4);
+MotorDC MotorE(ENCA1, ENCB1, IN2, IN1);
+MotorDC MotorD(ENCA2, ENCB2, IN3, IN4);
 
 
 // Criação dos objetos QTRSensors
@@ -27,10 +27,10 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCA1), readencoder1, RISING);
     attachInterrupt(digitalPinToInterrupt(ENCA2), readencoder2, RISING);
 
-    MotorD.configurar(2100, 1.8, 1.3, 0);
-    MotorE.configurar(2100, 1.8, 1.3, 0);
+    //MotorD.configurar(2100, 1.8, 1.3, 0);
+    //MotorE.configurar(2100, 1.8, 1.3, 0);
 
-    qtr.setTypeRC();
+   /* qtr.setTypeRC();
     qtr.setSensorPins((const uint8_t[]){32, 33, 25, 26, 27, 14, 12, 13}, SensorCount);
 
     Serial.println("Calibrating...");
@@ -38,14 +38,60 @@ void setup() {
         qtr.calibrate();
         delay(5);
     }
-    Serial.println("Done calibrating.");
+    Serial.println("Done calibrating.");*/
+
 
 }
 
 
+
+void ligar_motor(int direcao, int pwmVal){
+
+  if (direcao == 1){
+    // 1 para frente
+    analogWrite(IN1, pwmVal);
+    analogWrite(IN2, 0);
+    analogWrite(IN3, pwmVal);
+    analogWrite(IN4, 0);
+  }
+  else if (direcao == -1){
+    // -1 para trás
+    analogWrite(IN1, 0);
+    analogWrite(IN2, pwmVal);
+    analogWrite(IN3, 0);
+    analogWrite(IN4, pwmVal);
+  }
+  else{ // 0 para parar
+    digitalWrite(IN1, 255);
+    analogWrite(IN2, 255);
+    digitalWrite(IN3, 255);
+    analogWrite(IN4, 255);
+  }
+
+}
+
+void ligar_motor2(int direcao, int pwmVal){
+
+  if (direcao == 1){
+    // 1 para frente
+    analogWrite(IN3, pwmVal);
+    analogWrite(IN4, 0);
+  }
+  else if (direcao == -1){
+    // -1 para trás
+    analogWrite(IN3, 0);
+    analogWrite(IN4, pwmVal);
+  }
+  else{ // 0 para parar
+    digitalWrite(IN3, 255);
+    analogWrite(IN4, 255);
+  }
+
+}
+
 void loop()
 {
-  // read calibrated sensor values and obtain a measure of the line position
+  /*// read calibrated sensor values and obtain a measure of the line position
   // from 0 to 5000 (for a white line, use readLineWhite() instead)
   uint16_t position = qtr.readLineBlack(sensorValues);
 
@@ -59,7 +105,10 @@ void loop()
   }
   Serial.println(position);
 
-  delay(250);
+  delay(250);*/
+
+  ligar_motor(1,200);
+
 }
 
 void readencoder1() {
