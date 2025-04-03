@@ -6,17 +6,25 @@
 
 // Pinos dos motores
 
-#define ENCA1 3
-#define ENCB1 26
-#define ENA 5
-#define IN2 42
-#define IN1 43
+#define ENCA1 2
+#define ENCB1 4
+#define IN2 13
+#define IN1 12
 
-#define ENCA2 2
-#define ENCB2 28
-#define ENB 7
-#define IN4 48
-#define IN3 49
+#define ENCA2 5
+#define ENCB2 18
+#define IN4 15
+#define IN3 14
+
+#define LEDON 33
+#define D1 23
+#define D2 22
+#define D3 21
+#define D4 19
+#define D5 17
+#define D6 16
+#define D7 25
+#define D8 26
 
 
-#endif;
+#endif

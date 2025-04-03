@@ -7,15 +7,13 @@
 //* e fornecer os valores de velocidade e direção de giro do motor
 
 
-MotorDC::MotorDC(const int ENCA, const int ENCB, const int PWM, const int IN1, const int IN2)
+MotorDC::MotorDC(const int ENCA, const int ENCB, const int IN1, const int IN2)
 {
     this->ENCA = ENCA;
     this->ENCB = ENCB;
-    this->PWM = PWM;
     this->IN1 = IN1;
     this->IN2 = IN2;
     pinMode(ENCA, INPUT);
-    pinMode(PWM, OUTPUT);
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
 
@@ -34,21 +32,20 @@ void MotorDC::parar(){
 
 
 void MotorDC::ligar_motor(int direcao, int pwmVal){
-  
-    analogWrite(PWM, pwmVal); 
+
     if (direcao == 1){
       // 1 para frente
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
+      analogWrite(IN1, pwmVal);
+      analogWrite(IN2, 0);
     }
     else if (direcao == -1){
       // -1 para trás
-      digitalWrite(IN1, LOW);
-      digitalWrite(IN2, HIGH);
+      analogWrite(IN1, 0);
+      analogWrite(IN2, pwmVal);
     }
     else{ // 0 para parar
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, HIGH);
+      digitalWrite(IN1, 255);
+      analogWrite(IN2, 255);
     }
 
 }
