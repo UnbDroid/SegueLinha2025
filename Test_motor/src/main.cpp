@@ -18,55 +18,43 @@ unsigned long pos2 = 0; // Variável para armazenar a posição do encoder do mo
 
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
+#define encoderA 3  // Yellow wire#define encoderA 2  // Yellow wire
+#define encoderB 2  // Green wire
 
-void setup() {
+volatile int position = 0; // Keeps track of the encoder position
+int lastAState;
 
-    Serial.begin(9600);
-    MotorD.configurar(2100, 1.8, 1.3, 0);
-    MotorE.configurar(2100, 1.8, 1.3, 0);
-
-   /* qtr.setTypeRC();
-    qtr.setSensorPins((const uint8_t[]){32, 33, 25, 26, 27, 14, 12, 13}, SensorCount);
-
-    Serial.println("Calibrating...");
-    for (int i = 0; i < 400; i++) {
-        qtr.calibrate();
-        delay(5);
-    }
-    Serial.println("Done calibrating.");*/
-
-
-}
-
-void ligar_motor(int dir, int pwmVal) {
-    MotorD.ligar_motor(dir, pwmVal);
-    MotorE.ligar_motor(dir, pwmVal);
-}
-
-void loop()
-{
-  /*// read calibrated sensor values and obtain a measure of the line position
-  // from 0 to 5000 (for a white line, use readLineWhite() instead)
-  uint16_t position = qtr.readLineBlack(sensorValues);
-
-  // print the sensor values as numbers from 0 to 1000, where 0 means maximum
-  // reflectance and 1000 means minimum reflectance, followed by the line
-  // position
-  for (uint8_t i = 0; i < SensorCount; i++)
-  {
-    Serial.print(sensorValues[i]);
-    Serial.print('\t');
-  }
-  Serial.println(position);
-
-  delay(250);*/
-
-  MotorD.ligar_motor(1, 255);
-  MotorE.ligar_motor(1, 255);
-  delay(1000);
-  MotorD.ligar_motor(-1, 255);
-  MotorE.ligar_motor(-1, 255);
-  delay(1000);
+// Interrupt Service Routine (ISR) to read encoder changes
+void readEncoder() {
+  int A = digitalRead(encoderA);
+  int B = digitalRead(encoderB);
   
+  if (A != lastAState) { // If state of A has changed
+    if (B != A) { 
+      position++; // Clockwise
+    } else {
+      position--; // Counterclockwise
+    }
+  }
+  lastAState = A;
+}
+void setup() {
+  pinMode(encoderA, INPUT_PULLUP);
+  pinMode(encoderB, INPUT_PULLUP);
+  
+  // Attach an interrupt to encoderA (pin 2), triggering on state change
+  attachInterrupt(digitalPinToInterrupt(encoderA), readEncoder, CHANGE);
+
+  Serial.begin(9600);
+  lastAState = digitalRead(encoderA);
+}
+
+void loop() {
+  Serial.println(position); // Print encoder position
+  MotorD.ligar_motor(1,100);
+  MotorE.ligar_motor(-1,255);
+  delay(100);
+
 
 }
+
