@@ -20,6 +20,9 @@ void setup()
   pinMode(LEDON, OUTPUT);
   digitalWrite(LEDON, HIGH); // Turn on the IR LEDs
 
+  MotorD.ligar_motor(0,0);
+  MotorE.ligar_motor(0,0);
+
   // Configure the sensors on pins D1 to D8
   qtr.setTypeRC();
   qtr.setSensorPins((const uint8_t[]){D1, D2, D3, D4, D5, D6, D7, D8}, SensorCount);
