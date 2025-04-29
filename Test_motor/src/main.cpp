@@ -39,9 +39,9 @@ void setup()
 // PID control variables
 int error = 0;
 int lastError = 0; // To store the previous error
-float KP = 0.1;    // Proportional gain
-float KD = 0.05;   // Derivative gain
-int baseSpeed = 100; // Base motor speed
+float KP = 0.85;    // Proportional gain
+float KD = 5;   // Derivative gain
+int baseSpeed = 200; // Base motor speed
 
 void loop()
 {
