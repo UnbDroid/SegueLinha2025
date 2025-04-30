@@ -7,8 +7,8 @@
 QTRSensors qtr;
 
 // Motor objects
-MotorDC MotorE(ENCA1, ENCB1, IN2, IN1); // Left motor
-MotorDC MotorD(ENCA2, ENCB2, IN3, IN4); // Right motor
+MotorDC MotorD(ENCA1, ENCB1, IN2, IN1); // Left motor
+MotorDC MotorE(ENCA2, ENCB2, IN3, IN4); // Right motor
 
 const uint8_t SensorCount = 8; // Number of sensors
 uint16_t sensorValues[SensorCount]; // Array to store sensor values
@@ -28,7 +28,7 @@ void setup()
   qtr.setSensorPins((const uint8_t[]){D1, D2, D3, D4, D5, D6, D7, D8}, SensorCount);
 
   Serial.begin(9600);
-  delay(2000);
+  //delay(2000);
 
   // Calibrate the sensors
   Serial.println("Calibrating sensors...");
@@ -42,9 +42,9 @@ void setup()
 // PID control variables
 int error = 0;
 int lastError = 0; // To store the previous error
-float KP = 0.85;    // Proportional gain
+float KP = 0.1;    // Proportional gain
 float KD = 5;   // Derivative gain
-int baseSpeed = 200; // Base motor speed
+int baseSpeed = 100; // Base motor speed
 
 void loop()
 {
@@ -65,12 +65,12 @@ void loop()
   int rightMotorSpeed = baseSpeed + motorSpeed;
 
   // Constrain motor speeds to valid range (0 to 255)
-  leftMotorSpeed = constrain(leftMotorSpeed, 0, 255);
-  rightMotorSpeed = constrain(rightMotorSpeed, 0, 255);
+  leftMotorSpeed = constrain(leftMotorSpeed, 0, 100);
+  rightMotorSpeed = constrain(rightMotorSpeed, 0, 100);
 
   // Drive the motors
-  MotorE.ligar_motor(1, leftMotorSpeed);
-  MotorD.ligar_motor(1, rightMotorSpeed);
+  MotorE.ligar_motor(-1, leftMotorSpeed);
+  MotorD.ligar_motor(-1, rightMotorSpeed);
 
   // Optional: Print debug information
   Serial.print("Position: ");
@@ -81,6 +81,8 @@ void loop()
   Serial.print(leftMotorSpeed);
   Serial.print(" Right Speed: ");
   Serial.println(rightMotorSpeed);
-
   delay(10); // Small delay for stability
+  
+
+
 }
