@@ -1,71 +1,88 @@
 #include <Arduino.h>
+#include <QTRSensors.h>
 #include "MotorDC.h"
 #include "Pins.h"
 
-// Criação dos objetos Motor esquerdo e direito
-MotorDC MotorE(ENCA1, ENCB1, ENA, IN2, IN1);
-MotorDC MotorD(ENCA2, ENCB2, ENB, IN3, IN4);
+// QTRSensors object
+QTRSensors qtr;
 
-unsigned long pos1 = 0; // Variável para armazenar a posição do encoder do motor 1
-unsigned long pos2 = 0; // Variável para armazenar a posição do encoder do motor 2
+// Motor objects
+MotorDC MotorD(ENCA1, ENCB1, IN2, IN1); // Left motor
+MotorDC MotorE(ENCA2, ENCB2, IN3, IN4); // Right motor
 
-// Declaração das funções
-void readencoder1();
-void readencoder2();
+const uint8_t SensorCount = 8; // Number of sensors
+uint16_t sensorValues[SensorCount]; // Array to store sensor values
 
 
-void setup() {
-    Serial.begin(9600);
-    attachInterrupt(digitalPinToInterrupt(ENCA1), readencoder1, RISING);
-    attachInterrupt(digitalPinToInterrupt(ENCA2), readencoder2, RISING);
+void setup()
+{
+  // Configure the LEDON pin
+  pinMode(LEDON, OUTPUT);
+  digitalWrite(LEDON, HIGH); // Turn on the IR LEDs
 
-    MotorD.configurar(2100, 1.8, 1.3, 0);
-    MotorE.configurar(2100, 1.8, 1.3, 0);
+  MotorD.ligar_motor(0,0);
+  MotorE.ligar_motor(0,0);
 
+  // Configure the sensors on pins D1 to D8
+  qtr.setTypeRC();
+  qtr.setSensorPins((const uint8_t[]){D1, D2, D3, D4, D5, D6, D7, D8}, SensorCount);
+
+  Serial.begin(9600);
+  //delay(2000);
+
+  // Calibrate the sensors
+  Serial.println("Calibrating sensors...");
+  for (uint16_t i = 0; i < 400; i++)
+  {
+    qtr.calibrate();
+    delay(10);
+  }
+  Serial.println("Calibration complete.");
 }
+// PID control variables
+int error = 0;
+int lastError = 0; // To store the previous error
+float KP = 0.1;    // Proportional gain
+float KD = 5;   // Derivative gain
+int baseSpeed = 100; // Base motor speed
 
-void loop() {
-    Serial.println(pos1);
-    Serial.println(pos2);
-    MotorD.ligar_motor(1,200);
-    MotorE.ligar_motor(1,200);
-    delay(1000);
+void loop()
+{
+  // Read the line position (0 to 7000 for 8 sensors)
+  uint16_t position = qtr.readLineBlack(sensorValues);
 
-    MotorD.parar();
-    MotorE.parar();
-    delay(1000);
+  // Calculate the error (center is 3500 for 8 sensors)
+  error = position - 3500;
+
+  // Calculate motor speed adjustments using proportional and derivative control
+  int motorSpeed = KP * error + KD * (error - lastError);
+
+  // Update lastError for the next iteration
+  lastError = error;
+
+  // Set motor speeds
+  int leftMotorSpeed = baseSpeed - motorSpeed;
+  int rightMotorSpeed = baseSpeed + motorSpeed;
+
+  // Constrain motor speeds to valid range (0 to 255)
+  leftMotorSpeed = constrain(leftMotorSpeed, 0, 100);
+  rightMotorSpeed = constrain(rightMotorSpeed, 0, 100);
+
+  // Drive the motors
+  MotorE.ligar_motor(-1, leftMotorSpeed);
+  MotorD.ligar_motor(-1, rightMotorSpeed);
+
+  // Optional: Print debug information
+  Serial.print("Position: ");
+  Serial.print(position);
+  Serial.print(" Error: ");
+  Serial.print(error);
+  Serial.print(" Left Speed: ");
+  Serial.print(leftMotorSpeed);
+  Serial.print(" Right Speed: ");
+  Serial.println(rightMotorSpeed);
+  delay(10); // Small delay for stability
+  
 
 
-}
-
-void readencoder1() {
-int b = digitalRead(ENCA1);
-if (b > 0) {
-pos1++;
-} else {
-pos1--;
-}
-}
-
-void readencoder2() {
-int b = digitalRead(ENCA2);
-if (b > 0) {
-pos2++;
-} else {
-pos2--;
-}
-}
-
-void setMotor(int dir, int pwmVal, int en, int in1, int in2) {
-analogWrite(en, pwmVal);
-if (dir == 1) {
-digitalWrite(in1, HIGH);
-digitalWrite(in2, LOW);
-} else if (dir == -1) {
-digitalWrite(in1, LOW);
-digitalWrite(in2, HIGH);
-} else {
-digitalWrite(in1, LOW);
-digitalWrite(in2, LOW);
-}
 }
