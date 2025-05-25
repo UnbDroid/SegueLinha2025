@@ -53,15 +53,8 @@ void MotorDC::ligar_motor(int direcao, int pwmVal){
 // Função para ler o encoder do motor
 void MotorDC::ler_encoder(){
 
-  //fabs(rps*60)<1?posi+=dir:(rps*60)>1?posi++:posi--;  
-
-  if(fabs(rps * 60) < 1) 
-      posi += dir;
-  else if ((rps * 60) > 1) 
-      posi++;
-  else 
-      posi--;
-
+  posi++;
+  
 }
 
 // Função para resetar o encoder do motor
@@ -72,11 +65,11 @@ void MotorDC::resetar_encoder()
   voltas = 0;
 }
 
-void MotorDC::andar_reto(int velocidade_rpm){
+void MotorDC::set_RPM(int velocidade_rpm){
 
   // atualizar_tempo();
 
-  rpm_referencia = velocidade_rpm; // Velocidade de referência
+  rpm_referencia = fabs(velocidade_rpm); // Velocidade de referência
 
   volatile double posi_atual = 0;      // posição atual do encoder
   noInterrupts();              // desabilita interrupções
@@ -87,6 +80,7 @@ void MotorDC::andar_reto(int velocidade_rpm){
 
   voltas = posi_atual / encoder_volta;            // calcula o número de voltas do motor
   rps = (voltas - voltas_anterior) / dt; // calcula a velocidade do motor em rps
+  double rpm = rps*60;
 
   double e = rpm_referencia - (rps * 60); // calcula o erro da velocidade em rpm
 
@@ -102,17 +96,14 @@ void MotorDC::andar_reto(int velocidade_rpm){
 
   float pwmVal = fabs(u); // valor do pwm que será enviado ao motor
 
-  if (pwmVal > 255) // Limita o valor do pwm para 255
-  {
-    pwmVal = 255;
-  }
+  pwmVal = constrain(pwmVal, 0, 255); // Limita o valor do pwm entre 0 e 255
 
   // Define a direção do motor com base no valor de u
-  if (u > 0)
+  if (velocidade_rpm > 0)
   {
     dir = 1;
   }
-  else if (u < 0)
+  else if (velocidade_rpm < 0)
   {
     dir = -1;
   }
@@ -129,4 +120,5 @@ void MotorDC::andar_reto(int velocidade_rpm){
 
   eprev = e;
   
+
 }
