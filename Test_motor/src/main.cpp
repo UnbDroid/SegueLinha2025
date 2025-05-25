@@ -81,6 +81,6 @@ void TEST_SENSOR(int baseRPM, float kp, float kd, float ki){
 }
 
 void loop(){
-  TEST_SENSOR(500, 0.1, 0.1, 0.1);
+  TEST_SENSOR(500, 0.1, 0.1, 5);
   delay(100);
 }
