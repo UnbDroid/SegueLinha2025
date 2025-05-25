@@ -1,8 +1,8 @@
 #include "Tempo.h"
 
-extern unsigned long T;
-extern unsigned long prevT;
-extern double dt;
+unsigned long T;
+unsigned long prevT;
+double dt;
 
 
 void atualizar_tempo()
