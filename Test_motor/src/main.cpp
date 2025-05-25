@@ -2,87 +2,85 @@
 #include <QTRSensors.h>
 #include "MotorDC.h"
 #include "Pins.h"
+#include "algorithm"
 
 // QTRSensors object
 QTRSensors qtr;
 
 // Motor objects
-MotorDC MotorD(ENCA1, ENCB1, IN2, IN1); // Left motor
-MotorDC MotorE(ENCA2, ENCB2, IN3, IN4); // Right motor
+MotorDC MotorD(ENCA1, ENCB1, IN2, IN1);
+MotorDC MotorE(ENCA2, ENCB2, IN3, IN4); 
+int maxRPM = 1100; // Maximum RPM for the motors
+int minRPM = 216; // Minimum RPM for the motors TODO: test this with the motor loaded
+
 
 const uint8_t SensorCount = 8; // Number of sensors
 uint16_t sensorValues[SensorCount]; // Array to store sensor values
 
 
 void setup()
-{
-  // Configure the LEDON pin
-  pinMode(LEDON, OUTPUT);
-  digitalWrite(LEDON, HIGH); // Turn on the IR LEDs
-
-  MotorD.ligar_motor(0,0);
-  MotorE.ligar_motor(0,0);
-
-  // Configure the sensors on pins D1 to D8
+{ 
+  Serial.begin(115200);
+  delay(100);
+  
   qtr.setTypeRC();
   qtr.setSensorPins((const uint8_t[]){D1, D2, D3, D4, D5, D6, D7, D8}, SensorCount);
-
-  Serial.begin(9600);
-  //delay(2000);
-
-  // Calibrate the sensors
-  Serial.println("Calibrating sensors...");
-  for (uint16_t i = 0; i < 400; i++)
-  {
-    qtr.calibrate();
-    delay(10);
-  }
-  Serial.println("Calibration complete.");
-}
-// PID control variables
-int error = 0;
-int lastError = 0; // To store the previous error
-float KP = 0.1;    // Proportional gain
-float KD = 5;   // Derivative gain
-int baseSpeed = 100; // Base motor speed
-
-void loop()
-{
-  // Read the line position (0 to 7000 for 8 sensors)
-  uint16_t position = qtr.readLineBlack(sensorValues);
-
-  // Calculate the error (center is 3500 for 8 sensors)
-  error = position - 3500;
-
-  // Calculate motor speed adjustments using proportional and derivative control
-  int motorSpeed = KP * error + KD * (error - lastError);
-
-  // Update lastError for the next iteration
-  lastError = error;
-
-  // Set motor speeds
-  int leftMotorSpeed = baseSpeed - motorSpeed;
-  int rightMotorSpeed = baseSpeed + motorSpeed;
-
-  // Constrain motor speeds to valid range (0 to 255)
-  leftMotorSpeed = constrain(leftMotorSpeed, 0, 100);
-  rightMotorSpeed = constrain(rightMotorSpeed, 0, 100);
-
-  // Drive the motors
-  MotorE.ligar_motor(-1, leftMotorSpeed);
-  MotorD.ligar_motor(-1, rightMotorSpeed);
-
-  // Optional: Print debug information
-  Serial.print("Position: ");
-  Serial.print(position);
-  Serial.print(" Error: ");
-  Serial.print(error);
-  Serial.print(" Left Speed: ");
-  Serial.print(leftMotorSpeed);
-  Serial.print(" Right Speed: ");
-  Serial.println(rightMotorSpeed);
-  delay(10); // Small delay for stability
   
+  
+  //Hardcoded sensor values 
+  const uint16_t minValues[SensorCount] = {100, 110, 120, 130, 140, 150, 160, 170};
+  const uint16_t maxValues[SensorCount] = {900, 890, 880, 870, 860, 850, 840, 830};
+  
+  std::copy(minValues, minValues + 8, qtr.calibrationOn.minimum);
+  std::copy(maxValues, maxValues + 8, qtr.calibrationOn.maximum);
+  qtr.calibrationOn.initialized = true;
+  
+  MotorD.ligar_motor(0,0);
+  MotorE.ligar_motor(0,0);
+  
+}
 
+void MOTORPID_TEST(int desiredSpeed, float kp, float kd, float ki){
+  Serial.println("Motor PID test");
+  // Modificar apenas KP, KD  e KI. 
+  // Não modificar o valor de ticks por volta, pois isso é calculado com base no encoder do motor.
+  MotorE.configurar(12.0, kp, kd, ki);
+  MotorD.configurar(12.0, kp, kd, ki);
 
+  MotorD.set_RPM(desiredSpeed);
+  MotorE.set_RPM(desiredSpeed);
+  delay(100);
+
+  Serial.print("Desidered RPM: " + desiredSpeed);
+  Serial.print(" Motor E RPM: " + String(MotorE.get_rpm()));
+  Serial.print(" Motor D RPM: " + String(MotorD.get_rpm()) + "\n");
+
+}
+
+int16_t prevError = 0;
+float integral = 0;
+void TEST_SENSOR(int baseRPM, float kp, float kd, float ki){
+  uint16_t position = qtr.readLineWhite(sensorValues);
+  int16_t error = position - (SensorCount - 1) / 2; 
+
+  integral += error;
+  int16_t derivative = error - prevError;
+
+  int correction = kp * error + ki * integral + kd * derivative;
+  prevError = error;
+
+  int rpmLeft  = constrain(baseRPM - correction, minRPM, maxRPM);
+  int rpmRight = constrain(baseRPM + correction, minRPM, maxRPM);
+
+  MotorD.set_RPM(rpmRight);
+  MotorE.set_RPM(rpmLeft);
+  Serial.print("Left RPM: " + String(rpmLeft));
+  Serial.print(" Right RPM: " + String(rpmRight));
+  Serial.print(" Error: " + String(error));
+  Serial.print(" Correction: " + String(correction));
+}
+
+void loop(){
+  TEST_SENSOR(500, 0.1, 0.1, 0.1);
+  delay(100);
 }
