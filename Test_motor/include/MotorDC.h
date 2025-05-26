@@ -22,8 +22,9 @@ class MotorDC{
 
 
         private:
+        Tempo tempo;
         int encoder_volta; // valor de encoder referente a uma volta completa da roda
-        double comprimento_roda = 2 * M_PI * 0.016; 
+        double comprimento_roda = 2 * M_PI * 0.000000016; 
         int ENCA; // Cabo amarelo
         int ENCB; // Cabo branco
         int PWM;
@@ -35,7 +36,6 @@ class MotorDC{
         float ki; // constante integral do controle PID
         float kd; // constante derivativa do controle PID
         int rpm_referencia; // velocidade desejada do motor, velocidade que ele buscará alcançar
-        double rpm_max = 87; // velocidade máxima do motor (apenas por curiosidade, usar caso seja necessário)
         float eprev = 0;
         float eintegral = 0; // erro acumulado pro cálculo do ki
         int dir = 1; // 1 para frente, -1 para trás (pelo menos essa é a ideia)

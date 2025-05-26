@@ -1,13 +1,18 @@
-#ifndef Tempo_h
-#define Tempo_h
+// Tempo.h
+#ifndef TEMPO_H
+#define TEMPO_H
 
-#include "Arduino.h"
+#include <Arduino.h>
 
-//* Este arquivo contém a declaração das variáveis de tempo utilizadas no projeto
-extern unsigned long T;
-extern unsigned long prevT;
-extern double dt;
+class Tempo {
+  private:
+    unsigned long prevMicros;
+    double dt; // em segundos
 
-void atualizar_tempo();
+  public:
+    Tempo();                 // Construtor
+    void atualizar();        // Atualiza o tempo atual e calcula o dt
+    double getDeltaTime();   // Retorna o dt atual
+};
 
 #endif
