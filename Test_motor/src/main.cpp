@@ -38,7 +38,7 @@ void setup()
 { 
 
   pinMode(LEDON, OUTPUT);
-  digitalWrite(LEDON, HIGH); //não sei ainda o que fazer com isso aqui, antes ia agora nn vai.
+  digitalWrite(LEDON, HIGH); 
 
   Serial.begin(115200);
   delay(100);
