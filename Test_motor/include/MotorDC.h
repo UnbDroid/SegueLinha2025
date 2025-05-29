@@ -20,7 +20,6 @@ class MotorDC{
         double rps = 0; // velocidade ATUAL do motor em rotações por segundo
         double get_rpm() { return (rps*60); } // função para obter a velocidade do motor em rpm
 
-
         private:
         Tempo tempo;
         int encoder_volta; // valor de encoder referente a uma volta completa da roda
