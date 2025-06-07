@@ -6,13 +6,13 @@
 
 // Pinos dos motores
 
-#define ENCA1 15
-#define ENCB1 2
+#define ENCA_E 15
+#define ENCB_E 2
 #define IN2 26
-#define IN1 25 
+#define IN1 25
 
-#define ENCA2 4
-#define ENCB2 18
+#define ENCA_D 4
+#define ENCB_D 18
 #define IN4  14 
 #define IN3  12 
 
@@ -26,6 +26,8 @@
 #define D6 21
 #define D7 22
 #define D8 23
+#define D1_2 34
+#define D2_2 35
 
 
 #endif
