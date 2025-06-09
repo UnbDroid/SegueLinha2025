@@ -26,8 +26,8 @@
 #define D6 21
 #define D7 22
 #define D8 23
-#define D1_2 34
-#define D2_2 35
+#define D1_2 13
+#define D2_2 27
 
 
 #endif

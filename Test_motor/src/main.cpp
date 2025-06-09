@@ -44,9 +44,14 @@ kp 2 kd 10 bs= 100;
 */
 
 int cnt=0;
+int currentBaseSpeed = 80;
+bool marcadores[16] = {false,false,false,false,false,false,false,false,
+                       false,false,false,false,false,false,false,false};
+bool brancoDetectado = false;
 
-void setup()
-{
+
+  void setup()
+  {
   // Liga os LEDs IR dos sensores
   pinMode(LEDON, OUTPUT);
   digitalWrite(LEDON, HIGH);
@@ -60,18 +65,18 @@ void setup()
   Serial.begin(115200);
   delay(2000); // Espera para abrir o Monitor Serial, se necessário
 
-  // Calibração dos sensores principais
-  Serial.println("Calibrando sensores...");
-  for (uint16_t i = 0; i < 400; i++)
-  {
-    qtr.calibrate();
-    delay(10);
-  }
-  Serial.println("Calibração concluída.");
-  Serial.println("------------------------------------");
-  Serial.println("Iniciando loop principal...");
-}
+    // Calibração dos sensores
+    Serial.println("Calibrando sensores...");
+    for (uint16_t i = 0; i < 400; i++)
+    {
+      qtr.calibrate();
+      delay(10);
+    }
+    Serial.println("Calibração concluída.");
+    Serial.println("------------------------------------");
+    Serial.println("Iniciando loop principal...");
 
+  }  
 
 
   void loop(){
@@ -84,8 +89,6 @@ void setup()
   
     int derivative = error - lastError;
   
-  
-    int currentBaseSpeed = 80;
     int normal = abs(error) / 100;
     currentBaseSpeed *= (1-normal); // Base reduzida proporcionalmente ao erro
     currentBaseSpeed = constrain(currentBaseSpeed, 40, maxSpeed); 
@@ -120,18 +123,46 @@ void setup()
 
     Perifericos.read(sensorValues2, QTRReadMode::On);
 
-    Perifericos.read(sensorValues2);
-    for (int i = 0; i < SensorCount2; i++) {
-      if (sensorValues2[i] < 300) {
-        cnt++;
-      }
+    Perifericos.read(sensorValues2, QTRReadMode::On);
+
+  for (int i = 0; i < SensorCount2; i++) {
+    if (sensorValues2[i] < 300) {
+      brancoDetectado = true;
     }
 
-    // Se o valor do contador for um valor maior que 1, diminui a velocidade base do robô
+    else if (brancoDetectado && sensorValues2[i] >= 2500) {
+      cnt++;
+      brancoDetectado = false;
+    }
+    }
 
-    if (cnt >= 1) {
-      currentBaseSpeed = constrain(currentBaseSpeed - 20, minSpeed, maxSpeed);
-    }    
+  // Printa os valores dos sensores D1_2 e D2_2
+  Serial.print("Leitura D1_2: ");
+  Serial.println(sensorValues2[0]); // D1_2 está no índice 0
+  Serial.print("Leitura D2_2: ");
+  Serial.println(sensorValues2[1]); // D2_2 está no índice 1
 
-    delay(10); // Pequeno delay para estabilidade e leitura serial
+    
+    // Quando detectar a primeira marca, reduz a velocidade uma vez
+  if (!marcador1 && cnt == 1) {
+    marcador1 = true;
+    currentBaseSpeed -= 20;
+    Serial.println(">> Marca 1 detectada: Reduzindo velocidade.");
+  }
+
+  // Quando detectar a segunda marca, aumenta a velocidade uma vez
+  if (!marcador2 && cnt == 2) {
+    marcador2 = true;
+    currentBaseSpeed += 20;
+    Serial.println(">> Marca 2 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcador3 && cnt == 3) {
+    marcador3 = true;
+    currentBaseSpeed +=20; 
+    Serial.println(">> Marca 3 detectada: Aumentando velocidade.");
+  }
+
+
+  delay(500); // Pequeno delay para estabilidade e leitura serial
   }
