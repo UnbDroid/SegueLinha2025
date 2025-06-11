@@ -142,105 +142,56 @@ bool brancoDetectado = false;
   Serial.print("Leitura D2_2: ");
   Serial.println(sensorValues2[1]); // D2_2 está no índice 1
 
-    
-    // Quando detectar a primeira marca, reduz a velocidade uma vez
-  if (!marcadores[0] && cnt == 1) {
-    marcador[0]= true;
-    currentBaseSpeed -= 20;
-    Serial.println(">> Marca 1 detectada: Reduzindo velocidade.");
-  }
+  // Garante que o código só execute uma vez por marca
+if (!marcadores[cnt - 1]) {
+  marcadores[cnt - 1] = true;
+  Serial.print(">> Marca ");
+  Serial.print(cnt);
+  Serial.print(" detectada: ");
 
-  // Quando detectar a segunda marca, aumenta a velocidade uma vez
-  if (!marcadores[1] && cnt == 2) {
-    marcadores[1] = true;
-    currentBaseSpeed -= 20;
-    Serial.println(">> Marca 2 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[2] && cnt == 3) {
-    marcadores[2]= true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 3 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[3] && cnt == 4) {
-    marcadores[3] = true;
-    currentBaseSpeed +=40; 
-    Serial.println(">> Marca 4 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[4] && cnt == 5) {
-    marcadores[4] = true;
-    currentBaseSpeed -=30; 
-    Serial.println(">> Marca 5 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[5] && cnt == 6) {
-    marcadores[5] = true;
-    currentBaseSpeed +=20; 
-    Serial.println(">> Marca 6 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[6] && cnt == 7) {
-    marcadores[6] = true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 7 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[7] && cnt == 8) {
-    marcadores[7] = true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 8 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[8] && cnt == 9) {
-    marcadores[8] = true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 9 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[9] && cnt == 10) {
-    marcadores[9] = true;
-    currentBaseSpeed -=20; 
-    Serial.println(">> Marca 10 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[10] && cnt ==11) {
-    marcadores[10] = true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 11 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[11] && cnt == 12) {
-    marcadores[11] = true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 12 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[12] && cnt == 13) {
-    marcadores[12] = true;
-    currentBaseSpeed +=30 
-    Serial.println(">> Marca 13 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[13] && cnt == 14) {
-    marcadores[13] = true;
-    currentBaseSpeed =currentBaseSpeed; 
-    Serial.println(">> Marca 14 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[14] && cnt == 15) {
-    marcadores[14] = true;
-    currentBaseSpeed -=20; 
-    Serial.println(">> Marca 15 detectada: Aumentando velocidade.");
-  }
-
-  if(!marcadores[15] && cnt == 16) {
-    marcadores[15] = true;
-    currentBaseSpeed +=20; 
-    Serial.println(">> Marca 16 detectada: Aumentando velocidade.");
-  }
-
+  switch (cnt) {
+    case 1:
+      currentBaseSpeed -= 20;
+      Serial.println("Reduzindo velocidade.");
+      break;
+    case 2:
+      currentBaseSpeed -= 20; // O comentário original dizia "Aumentando", mas o código subtraía
+      Serial.println("Ajustando velocidade.");
+      break;
+    case 4:
+      currentBaseSpeed += 40;
+      Serial.println("Aumentando velocidade.");
+      break;
+    case 5:
+      currentBaseSpeed -= 30;
+      Serial.println("Ajustando velocidade.");
+      break;
+    case 6:
+      currentBaseSpeed += 20;
+      Serial.println("Aumentando velocidade.");
+      break;
+    case 10:
+      currentBaseSpeed -= 20;
+      Serial.println("Ajustando velocidade.");
+      break;
+    case 13:
+      currentBaseSpeed += 30;
+      Serial.println("Aumentando velocidade.");
+      break;
+    case 15:
+      currentBaseSpeed -= 20;
+      Serial.println("Ajustando velocidade.");
+      break;
+    case 16:
+      currentBaseSpeed += 20;
+      Serial.println("Aumentando velocidade.");
+      break;
+    default:
+      // Casos 3, 7, 8, 9, 11, 12, 14 não fazem nada
+      Serial.println("Velocidade mantida.");
+      break;
+    }
+}
 
   delay(10); // Pequeno delay para estabilidade e leitura serial
   }
