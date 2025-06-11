@@ -144,25 +144,103 @@ bool brancoDetectado = false;
 
     
     // Quando detectar a primeira marca, reduz a velocidade uma vez
-  if (!marcador1 && cnt == 1) {
-    marcador1 = true;
+  if (!marcadores[0] && cnt == 1) {
+    marcador[0]= true;
     currentBaseSpeed -= 20;
     Serial.println(">> Marca 1 detectada: Reduzindo velocidade.");
   }
 
   // Quando detectar a segunda marca, aumenta a velocidade uma vez
-  if (!marcador2 && cnt == 2) {
-    marcador2 = true;
-    currentBaseSpeed += 20;
+  if (!marcadores[1] && cnt == 2) {
+    marcadores[1] = true;
+    currentBaseSpeed -= 20;
     Serial.println(">> Marca 2 detectada: Aumentando velocidade.");
   }
 
-  if(!marcador3 && cnt == 3) {
-    marcador3 = true;
-    currentBaseSpeed +=20; 
+  if(!marcadores[2] && cnt == 3) {
+    marcadores[2]= true;
+    currentBaseSpeed =currentBaseSpeed; 
     Serial.println(">> Marca 3 detectada: Aumentando velocidade.");
   }
 
+  if(!marcadores[3] && cnt == 4) {
+    marcadores[3] = true;
+    currentBaseSpeed +=40; 
+    Serial.println(">> Marca 4 detectada: Aumentando velocidade.");
+  }
 
-  delay(500); // Pequeno delay para estabilidade e leitura serial
+  if(!marcadores[4] && cnt == 5) {
+    marcadores[4] = true;
+    currentBaseSpeed -=30; 
+    Serial.println(">> Marca 5 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[5] && cnt == 6) {
+    marcadores[5] = true;
+    currentBaseSpeed +=20; 
+    Serial.println(">> Marca 6 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[6] && cnt == 7) {
+    marcadores[6] = true;
+    currentBaseSpeed =currentBaseSpeed; 
+    Serial.println(">> Marca 7 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[7] && cnt == 8) {
+    marcadores[7] = true;
+    currentBaseSpeed =currentBaseSpeed; 
+    Serial.println(">> Marca 8 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[8] && cnt == 9) {
+    marcadores[8] = true;
+    currentBaseSpeed =currentBaseSpeed; 
+    Serial.println(">> Marca 9 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[9] && cnt == 10) {
+    marcadores[9] = true;
+    currentBaseSpeed -=20; 
+    Serial.println(">> Marca 10 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[10] && cnt ==11) {
+    marcadores[10] = true;
+    currentBaseSpeed =currentBaseSpeed; 
+    Serial.println(">> Marca 11 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[11] && cnt == 12) {
+    marcadores[11] = true;
+    currentBaseSpeed =currentBaseSpeed; 
+    Serial.println(">> Marca 12 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[12] && cnt == 13) {
+    marcadores[12] = true;
+    currentBaseSpeed +=30 
+    Serial.println(">> Marca 13 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[13] && cnt == 14) {
+    marcadores[13] = true;
+    currentBaseSpeed =currentBaseSpeed; 
+    Serial.println(">> Marca 14 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[14] && cnt == 15) {
+    marcadores[14] = true;
+    currentBaseSpeed -=20; 
+    Serial.println(">> Marca 15 detectada: Aumentando velocidade.");
+  }
+
+  if(!marcadores[15] && cnt == 16) {
+    marcadores[15] = true;
+    currentBaseSpeed +=20; 
+    Serial.println(">> Marca 16 detectada: Aumentando velocidade.");
+  }
+
+
+  delay(10); // Pequeno delay para estabilidade e leitura serial
   }
