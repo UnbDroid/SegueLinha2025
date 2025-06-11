@@ -152,10 +152,10 @@ if (!marcadores[cnt - 1]) {
   switch (cnt) {
     case 1:
       currentBaseSpeed -= 20;
-      Serial.println("Reduzindo velocidade.");
+      Serial.println("Ajustando velocidade.");
       break;
     case 2:
-      currentBaseSpeed -= 20; // O comentário original dizia "Aumentando", mas o código subtraía
+      currentBaseSpeed -= 20;
       Serial.println("Ajustando velocidade.");
       break;
     case 4:
@@ -193,5 +193,5 @@ if (!marcadores[cnt - 1]) {
     }
 }
 
-  delay(10); // Pequeno delay para estabilidade e leitura serial
+  delay(15); // Pequeno delay para estabilidade e leitura serial
   }
