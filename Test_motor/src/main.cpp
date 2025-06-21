@@ -36,95 +36,46 @@ kp 2 kd 10 bs= 100;
 */
 
 void setup() {
+  {
+    MotorD.ligar_motor(0,0);
+    MotorE.ligar_motor(0,0);
   
-  Serial.begin(115200);
-  delay(2000);
+    // Configure the sensors on pins D1 to D8
+    qtr.setTypeRC();
+    qtr.setSensorPins((const uint8_t[]){D1, D2, D3, D4, D5, D6, D7, D8}, SensorCount);
   
-
-  // Configure QTR sensor
-  qtr.setTypeRC();
-  qtr.setSensorPins((const uint8_t[]){D1, D2, D3, D4, D5, D6, D7, D8}, SensorCount);
+    Serial.begin(115200);
+    //delay(2000);
   
-  // Hardcoded calibration (replace with your actual values)
-  const uint16_t minValues[SensorCount] = {345, 369, 266, 203, 264, 263, 370, 370};
-  const uint16_t maxValues[SensorCount] = {449, 2500, 2500, 2500, 2500, 2500, 2500};
-  
-  qtr.calibrationOn.minimum = new uint16_t[SensorCount];
-  qtr.calibrationOn.maximum = new uint16_t[SensorCount];
-  qtr.calibrationOn.initialized = true;
-  std::copy(minValues, minValues + 8, qtr.calibrationOn.minimum);
-  std::copy(maxValues, maxValues + 8, qtr.calibrationOn.maximum);
-
-}
-
-void calibration_values();
-void follow_line();
-
-void loop(){
-
-  //calibration_values();
-  // Por a função de testes e "follow line" para partida.
-  //follow_line();
-  
-  Serial.end(); 
-  
-
-}
-
-
-void calibration_values() {
-  int k = 1;
-  while(k){
-    int valoresSensoresMin[8];
-    int valoresSensoresMax[8];
-
-    for (uint16_t i = 0; i < 400; i++) {
+    // Calibrate the sensors
+    Serial.println("Calibrating sensors...");
+    for (uint16_t i = 0; i < 100; i++)
+    {
       qtr.calibrate();
       delay(10);
     }
-
-    for (uint16_t i = 0; i < SensorCount; i++) {
-      valoresSensoresMin[i] = qtr.calibrationOn.minimum[i];
-      valoresSensoresMax[i] = qtr.calibrationOn.maximum[i];
-    }
-
-    // Print minimum values
-    Serial.println("Min values:");
-    for (uint16_t i = 0; i < SensorCount - 1; i++) {
-      Serial.print(valoresSensoresMin[i]);
-      Serial.print(", ");
-    }
-  
-    Serial.println(valoresSensoresMin[SensorCount - 1]);
-
-    // Print maximum values
-    Serial.println("Max values:");
-    for (uint16_t i = 0; i < SensorCount - 1; i++) {
-      Serial.print(valoresSensoresMax[i]);
-      Serial.print(", ");
-
-    }
-    Serial.println(valoresSensoresMax[SensorCount - 1]);
+    Serial.println("Calibration complete.");
   }
-
-  Serial.end();
-
-  
-
-
 }
 
+void follow_line();
 
+void loop(){
+  follow_line();
+}
 
 void follow_line(){
   uint16_t position = qtr.readLineWhite(sensorValues);
 
   // Calcula o erro em relação ao centro (3500)
-  int error = map(position, 0, 7000, -100, 100);  
+  //error = position - 4500;
+
+
+  float error = map(position, 3000, 7000, -100, 100); 
 
   int derivative = error - lastError;
 
-  int currentBaseSpeed = 75;
+  int currentBaseSpeed = 80;
   float normalizedError = constrain(abs(error) / 100.0, 0, 1);  
   
   // Apply quadratic reduction: the larger the error, the more speed is reduced
@@ -135,6 +86,7 @@ void follow_line(){
   
   // Correção com PID (PD)
   int correction = KP * error + KD * derivative + KI * ((error + lastError) / 2);
+  correction = constrain(correction, -150, 150);
 
 
   // Calcula as velocidades dos motores usando a currentBaseSpeed

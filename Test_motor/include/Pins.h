@@ -28,4 +28,13 @@
 #define D8 23
 
 
+
+#define D1_D 27 
+#define D2_D 13 
+
+#define D1_E 34
+#define D2_E 35 
+
+
+
 #endif
