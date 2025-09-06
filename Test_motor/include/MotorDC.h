@@ -15,13 +15,15 @@ class MotorDC{
         void ligar_motor(int direcao, int pwmVal);
         void ler_encoder();
         void resetar_encoder();
-        void andar_reto(int velocidade_rpm);
+        void set_RPM(int velocidade_rpm);
         volatile double posi; // posição do motor em ticks do encoder
         double rps = 0; // velocidade ATUAL do motor em rotações por segundo
-        int encoder_volta; // valor de encoder referente a uma volta completa da roda
-        double comprimento_roda = 2 * M_PI * 6.272; //TODO: medir o raio da roda real
+        double get_rpm() { return (rps*60); } // função para obter a velocidade do motor em rpm
 
-    private:
+        private:
+        Tempo tempo;
+        int encoder_volta; // valor de encoder referente a uma volta completa da roda
+        double comprimento_roda = 2 * M_PI * 0.000000016; 
         int ENCA; // Cabo amarelo
         int ENCB; // Cabo branco
         int PWM;
@@ -33,11 +35,10 @@ class MotorDC{
         float ki; // constante integral do controle PID
         float kd; // constante derivativa do controle PID
         int rpm_referencia; // velocidade desejada do motor, velocidade que ele buscará alcançar
-        double rpm_max = 87; // velocidade máxima do motor (apenas por curiosidade, usar caso seja necessário)
         float eprev = 0;
         float eintegral = 0; // erro acumulado pro cálculo do ki
         int dir = 1; // 1 para frente, -1 para trás (pelo menos essa é a ideia)
-        
+
 };
 
 #endif

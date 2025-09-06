@@ -16,6 +16,7 @@ MotorDC::MotorDC(const int ENCA, const int ENCB, const int IN1, const int IN2)
     pinMode(ENCA, INPUT);
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
+    
 
 }
 
@@ -52,16 +53,8 @@ void MotorDC::ligar_motor(int direcao, int pwmVal){
 
 // Função para ler o encoder do motor
 void MotorDC::ler_encoder(){
-
-  //fabs(rps*60)<1?posi+=dir:(rps*60)>1?posi++:posi--;  
-
-  if(fabs(rps * 60) < 1) 
-      posi += dir;
-  else if ((rps * 60) > 1) 
-      posi++;
-  else 
-      posi--;
-
+  posi++;
+  
 }
 
 // Função para resetar o encoder do motor
@@ -71,62 +64,41 @@ void MotorDC::resetar_encoder()
   eintegral = 0;
   voltas = 0;
 }
+void MotorDC::set_RPM(int velocidade_rpm){
 
-void MotorDC::andar_reto(int velocidade_rpm){
+  //Serial.print("encoder_volta: "); Serial.println(encoder_volta);
 
-  // atualizar_tempo();
+  tempo.atualizar();
+  double dt = tempo.getDeltaTime();
 
-  rpm_referencia = velocidade_rpm; // Velocidade de referência
+  rpm_referencia = fabs(velocidade_rpm);
 
-  volatile double posi_atual = 0;      // posição atual do encoder
-  noInterrupts();              // desabilita interrupções
-  posi_atual = posi;          // atualiza a posição atual do encoder
-  interrupts();               // reabilita interrupções
+  volatile double posi_atual = 0;
+  noInterrupts();
+  posi_atual = posi;
+  interrupts();
 
-  voltas_anterior = voltas; // atualiza o número de voltas anterior
+  voltas_anterior = voltas;
+  voltas = posi_atual / encoder_volta;
+  rps = (voltas - voltas_anterior) / dt;
+  rps = rps/100;
 
-  voltas = posi_atual / encoder_volta;            // calcula o número de voltas do motor
-  rps = (voltas - voltas_anterior) / dt; // calcula a velocidade do motor em rps
-
-  double e = rpm_referencia - (rps * 60); // calcula o erro da velocidade em rpm
+  double rpm = rps * 60;
+  double e = rpm_referencia - rpm;
 
   float p = kp * e;
-
   eintegral += e;
+  float i = ki * eintegral * dt;
+  float d = kd * (e - eprev) / dt;
+  float u = p + i + d;
 
-  float i = ki * eintegral*dt;
+  float pwmVal = constrain(fabs(u), 0, 255);
 
-  float d = kd * ((e - eprev) / dt);
+  if (velocidade_rpm > 0) dir = 1;
+  else if (velocidade_rpm < 0) dir = -1;
+  else dir = 0;
 
-  float u = p + i + d; //p + (ki * eintegral*dt) + d;
-
-  float pwmVal = fabs(u); // valor do pwm que será enviado ao motor
-
-  if (pwmVal > 255) // Limita o valor do pwm para 255
-  {
-    pwmVal = 255;
-  }
-
-  // Define a direção do motor com base no valor de u
-  if (u > 0)
-  {
-    dir = 1;
-  }
-  else if (u < 0)
-  {
-    dir = -1;
-  }
-  else
-  {
-    dir = 0;
-  }
-
-  if (velocidade_rpm != 0) {
-    ligar_motor(dir, pwmVal);
-  } else {
-    ligar_motor(0, 0);
-  }
-
+  ligar_motor(dir, pwmVal);
   eprev = e;
-  
+
 }

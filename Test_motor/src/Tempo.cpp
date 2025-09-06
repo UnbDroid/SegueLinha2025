@@ -1,13 +1,17 @@
+// Tempo.cpp
 #include "Tempo.h"
 
-extern unsigned long T;
-extern unsigned long prevT;
-extern double dt;
+Tempo::Tempo() {
+  prevMicros = micros();
+  dt = 0.0;
+}
 
+void Tempo::atualizar() {
+  unsigned long currentMicros = micros();
+  dt = (currentMicros - prevMicros) / 1.0e6; // converte para segundos
+  prevMicros = currentMicros;
+}
 
-void atualizar_tempo()
-{
-    T = micros();
-    dt = ((float) (T - prevT))/( 1.0e6 );
-    prevT = T;
+double Tempo::getDeltaTime() {
+  return dt;
 }
